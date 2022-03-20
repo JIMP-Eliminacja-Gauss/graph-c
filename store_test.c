@@ -32,5 +32,7 @@ int main(int argc, char **argv) {
         }
     }
 
+    store_free(graph, atoi(argv[1]));
+
     return 0; 
 }

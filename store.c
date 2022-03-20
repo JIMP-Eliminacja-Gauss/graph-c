@@ -71,4 +71,6 @@ void store_free(graph_t graph, int n_vertices) {
             free(temp);
         }
     }
+
+    free(graph);
 }
