@@ -41,15 +41,14 @@ int bfs (wierzcholek_t graph[9], int n, int start_vertex) {
 
     for (int i = 0; i < n; i++) {
         if (queue[i] == -1) {
-            printf ("k = %d\n", k);
             return 1;
         }
-        if (k == n)
-            return 0;
+        /*if (k == n)
+            return 0;*/
         tmp = graph[queue[i]]->head;
         if (tmp == NULL)
             continue;
-        while (1) {
+        while (tmp != NULL) {
             if (visited[tmp->vertex_index] != 1) {
                 visited[tmp->vertex_index] = 1;
                 queue[k] = tmp->vertex_index;
@@ -64,13 +63,10 @@ int bfs (wierzcholek_t graph[9], int n, int start_vertex) {
             }
             /* DIJKSTRA */
 
-            if (tmp->next == NULL)
-                break;
             tmp = tmp->next;
         }
     }
 
-    printf ("k = %d\n", k); 
     if (k == n)
         return 0;
     else
