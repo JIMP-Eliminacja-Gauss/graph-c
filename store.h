@@ -2,8 +2,7 @@
 #define _STORE_H_
 
 // to sie wrzuci i tak do maina
-enum { ARGS_ERR = 1, READ_ERR, WRITE_ERR, MEMORY_ERR, FORMAT_ERR };
-
+enum { ARGS_ERR = 1, READ_ERR, WRITE_ERR, MEMORY_ERR, FORMAT_ERR }; 
 
 typedef struct edge {
     int vertex_index;

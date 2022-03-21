@@ -14,16 +14,7 @@ graph_t store_init(int n_vertices) {
     for (int i = 0; i < n_vertices; i++) {
         new_graph[i].shortest_path = 0;
         new_graph[i].last_vertex_index = i;
-        new_graph[i].head = NULL;
-
-        /* alokuje miejsce na strukture przetrzymujaca
-         * informacje o pierwszym polaczonym wierzcholku
-         * z wierzcholkiem (i) oraz ustawiam jego domyslne 
-         * parametry, zeby w funkcji store_init_edge mozna 
-         * bylo latwo rozpoznac czy juz cos bylo zapisane 
-         * to zmiennej new_graph[i].head
-         */
-
+        new_graph[i].head = NULL; 
     } 
 
     return new_graph; 
@@ -64,7 +55,9 @@ int store_init_edge(edge_t *head, int vertex_index, double weight) {
 
 void store_free(graph_t graph, int n_vertices) {
     edge_t temp;
-    for (int i = 0; i < n_vertices; i++) {
+    
+    for (int i = 0; i < n_vertices; i++) { 
+
         while (graph[i].head != NULL) {
             temp = graph[i].head;
             graph[i].head = graph[i].head -> next;
