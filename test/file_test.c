@@ -29,6 +29,8 @@ int main(int argc, char **argv) {
 
     print_struct(graph, rows, columns);
 
+    file_create (argv[2], rows, columns, graph);
+
     store_free(graph, rows * columns);
 
     return 0;
