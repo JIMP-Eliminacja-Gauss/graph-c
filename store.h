@@ -19,7 +19,7 @@ typedef struct {
 
 graph_t store_init(int n_vertices);
 
-int store_init_edge(edge_t *head, int vertex_index, double weight);
+int store_add_edge(edge_t *head, int vertex_index, double weight);
 
 void store_free(graph_t graph, int n_vertices); 
 

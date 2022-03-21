@@ -20,7 +20,7 @@ graph_t store_init(int n_vertices) {
     return new_graph; 
 }
 
-int store_init_edge(edge_t *head, int vertex_index, double weight) {
+int store_add_edge(edge_t *head, int vertex_index, double weight) {
     if (*head == NULL) {
         if (MALLOC_FAILED(*head, 1)) {
             return MEMORY_ERR;
