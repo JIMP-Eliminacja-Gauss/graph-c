@@ -17,51 +17,21 @@
 
 typedef struct przejscia {
     int vertex_index;
+    double weight;
     struct przejscia *next;
 } *przejscia_t;
 
 typedef struct wierzcholek {
     int last_vertex_index;
+    double shortest_path;
     struct przejscia *head;
 } *wierzcholek_t;
-
-
-/*
-int bfs (wierzcholek_t graph[9], int n, int queue[n], int visited[n], int *k, int vertex) {
-    przejscia_t tmp = graph[vertex]->head;
-    if (tmp == NULL)
-        return 1;
-    while (1) {
-        if (visited[tmp->vertex_index] != 1) {
-            visited[tmp->vertex_index] = 1;
-            queue[*k] = tmp->vertex_index;
-            if (*k != n-1)
-                queue[*k + 1] = -1;
-            (*k)++;
-        }
-        if (tmp->next == NULL)
-            break;
-        tmp = tmp->next;
-    }
-    
-    //if (visited[tmp->vertex_index] != 1) {
-        //visited[tmp->vertex_index] = 1;
-        //queue[*k] = tmp->vertex_index;
-        //if (*k != n-1)
-            //queue[*k + 1] = -1;
-        //(*k)++;
-    //}
-    
-    return 0;
-}
-*/
 
 
 
 int bfs (wierzcholek_t graph[9], int n, int start_vertex) {
     int visited[n];
     int queue[n];
-    int v = 1;   
     int k = 1;
     przejscia_t tmp;
 
@@ -87,6 +57,13 @@ int bfs (wierzcholek_t graph[9], int n, int start_vertex) {
                     queue[k+1] = -1;
                 k++;
             }
+            /* DIJKSTRA */
+            if (graph[tmp->vertex_index]->shortest_path == 0 || graph[tmp->vertex_index]->shortest_path > graph[queue[i]]->shortest_path + tmp->weight) {
+                graph[tmp->vertex_index]->shortest_path = graph[queue[i]]->shortest_path + tmp->weight;
+                graph[tmp->vertex_index]->last_vertex_index = queue[i];
+            }
+            /* DIJKSTRA */
+
             if (tmp->next == NULL)
                 break;
             tmp = tmp->next;
@@ -101,10 +78,13 @@ int bfs (wierzcholek_t graph[9], int n, int start_vertex) {
 }
 
 
-
-
-
-
+void printall (wierzcholek_t graph[9], int n, int start_vertex) {
+    printf ("wierzcholek startowy: %d\n", start_vertex);
+    for (int i = 0; i < 9; i++)
+        if (i != start_vertex)
+            printf ("najkrotsza droga do %d = %g\n", i, graph[i]->shortest_path);
+    printf ("\n");
+}
 
 int main (int argc, char **argv) {
     if( argc < 2 ) {
@@ -125,6 +105,10 @@ int main (int argc, char **argv) {
     graph[0]->head->next = malloc (sizeof(struct przejscia));
     graph[0]->head->next->vertex_index = 3;
 
+    graph[0]->head->weight = 5;
+    graph[0]->head->next->weight = 1;
+
+
     graph[1]->head = malloc (sizeof(struct przejscia));
     graph[1]->head->vertex_index = 0;
     graph[1]->head->next = malloc (sizeof(struct przejscia));
@@ -132,11 +116,19 @@ int main (int argc, char **argv) {
     graph[1]->head->next->next = malloc (sizeof(struct przejscia));
     graph[1]->head->next->next->vertex_index = 4;
 
+    graph[1]->head->weight = 5;
+    graph[1]->head->next->weight = 1;
+    graph[1]->head->next->next->weight = 2;
+
 
     graph[2]->head = malloc (sizeof(struct przejscia));
     graph[2]->head->vertex_index = 1;
     graph[2]->head->next = malloc (sizeof(struct przejscia));
     graph[2]->head->next->vertex_index = 5;
+
+    graph[2]->head->weight = 1;
+    graph[2]->head->next->weight = 6;
+
 
     graph[3]->head = malloc (sizeof(struct przejscia));
     graph[3]->head->vertex_index = 0;
@@ -144,6 +136,11 @@ int main (int argc, char **argv) {
     graph[3]->head->next->vertex_index = 4;
     graph[3]->head->next->next = malloc (sizeof(struct przejscia));
     graph[3]->head->next->next->vertex_index = 6;
+
+    graph[3]->head->weight = 1;
+    graph[3]->head->next->weight = 1;
+    graph[3]->head->next->next->weight = 3;
+
 
     graph[4]->head = malloc (sizeof(struct przejscia));
     graph[4]->head->vertex_index = 1;
@@ -154,6 +151,12 @@ int main (int argc, char **argv) {
     graph[4]->head->next->next->next = malloc (sizeof(struct przejscia));
     graph[4]->head->next->next->next->vertex_index = 7;
 
+    graph[4]->head->weight = 2;
+    graph[4]->head->next->weight = 1;
+    graph[4]->head->next->next->weight = 1;
+    graph[4]->head->next->next->next->weight = 10;
+
+
     graph[5]->head = malloc (sizeof(struct przejscia));
     graph[5]->head->vertex_index = 2;
     graph[5]->head->next = malloc (sizeof(struct przejscia));
@@ -161,10 +164,19 @@ int main (int argc, char **argv) {
     graph[5]->head->next->next = malloc (sizeof(struct przejscia));
     graph[5]->head->next->next->vertex_index = 8;
 
+    graph[5]->head->weight = 6;
+    graph[5]->head->next->weight = 1;
+    graph[5]->head->next->next->weight = 1;
+
+
     graph[6]->head = malloc (sizeof(struct przejscia));
     graph[6]->head->vertex_index = 3;
     graph[6]->head->next = malloc (sizeof(struct przejscia));
     graph[6]->head->next->vertex_index = 7;
+
+    graph[6]->head->weight = 3;
+    graph[6]->head->next->weight = 2;
+
 
     graph[7]->head = malloc (sizeof(struct przejscia));
     graph[7]->head->vertex_index = 4;
@@ -173,12 +185,18 @@ int main (int argc, char **argv) {
     graph[7]->head->next->next = malloc (sizeof(struct przejscia));
     graph[7]->head->next->next->vertex_index = 8;
 
+    graph[7]->head->weight = 10;
+    graph[7]->head->next->weight = 2;
+    graph[7]->head->next->next->weight = 8;
+
+
     graph[8]->head = malloc (sizeof(struct przejscia));
     graph[8]->head->vertex_index = 5;
     graph[8]->head->next = malloc (sizeof(struct przejscia));
     graph[8]->head->next->vertex_index = 7;
 
-
+    graph[8]->head->weight = 1;
+    graph[8]->head->next->weight = 8;
 
 
 #endif
@@ -237,6 +255,8 @@ int main (int argc, char **argv) {
         printf ("graf spojny\n");
     else
         printf ("graf niespojny\n");
+
+    printall (graph, 9, start_vertex);
     return 0;
 }
 
