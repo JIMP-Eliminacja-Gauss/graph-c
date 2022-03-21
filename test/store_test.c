@@ -1,4 +1,4 @@
-#include "store.h"
+#include "../store.h"
 
 #include <stdlib.h>
 #include <stdio.h>
