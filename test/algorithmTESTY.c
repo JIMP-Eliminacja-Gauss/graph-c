@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "algorithmTESTY.h"
 /*
 *  0:  1,3
 *  1:  0, 2, 4
@@ -14,19 +14,6 @@
 */
 
 /* kolejka od wierzcholka poczatkowego */
-
-typedef struct przejscia {
-    int vertex_index;
-    double weight;
-    struct przejscia *next;
-} *przejscia_t;
-
-typedef struct wierzcholek {
-    int last_vertex_index;
-    double shortest_path;
-    struct przejscia *head;
-} *wierzcholek_t;
-
 
 
 int bfs (wierzcholek_t graph[9], int n, int start_vertex) {
@@ -76,7 +63,7 @@ int bfs (wierzcholek_t graph[9], int n, int start_vertex) {
 
 void printall (wierzcholek_t graph[9], int n, int start_vertex) {
     printf ("wierzcholek startowy: %d\n", start_vertex);
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < n; i++)
         if (i != start_vertex)
             printf ("najkrotsza droga do %d = %g\n", i, graph[i]->shortest_path);
     printf ("\n");
@@ -84,7 +71,7 @@ void printall (wierzcholek_t graph[9], int n, int start_vertex) {
 
 int main (int argc, char **argv) {
     if( argc < 2 ) {
-        printf ("za malo argumentow\n");
+        printf ("pierwszy argument - indeks wierzchołka od, którego zaczynamy BFS i DIJKSTRE\n");
         return 1;
     }
     int start_vertex = atoi (argv[1]);
