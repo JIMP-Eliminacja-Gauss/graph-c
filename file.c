@@ -60,5 +60,17 @@ graph_t file_read(char *file_name, int *rows, int *columns) {
 }
 
 int file_create(char *file_name, int rows, int columns, graph_t graph) {
+    FILE *out = fopen (file_name, "w");
+    if (out == NULL)
+        return 1;
+    fprintf (out, "%d %d\n", rows, columns);
+    for (int i = 0; i < rows*columns; i++) {
+        edge_t tmp = graph[i].head;
+        while (tmp != NULL) {
+            fprintf (out, "%d :%.16lf ", tmp->vertex_index, tmp->weight);
+            tmp = tmp->next;
+        }
+        fprintf (out, "\n");
+    }
     return 0;
 }
