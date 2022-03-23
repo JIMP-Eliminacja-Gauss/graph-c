@@ -16,7 +16,6 @@ graph_t file_read(char *file_name, int *rows, int *columns) {
     FILE *in = fopen(file_name, "r");
     graph_t graph;
     int line = 0, vertex;
-    char newline_indicator;
     double weight;
 
     if (in == NULL) {
@@ -35,30 +34,24 @@ graph_t file_read(char *file_name, int *rows, int *columns) {
         return NULL;
     }
 
-    while (fscanf(in, "%d :%lf%c", &vertex, &weight, &newline_indicator) == 3) {
-        if (store_add_edge( &(graph[line].head), vertex, weight ) != 0) {
-            fclose(in);
+    int newline_indicator;
+    while (fscanf(in, "%d :%lf", &vertex, &weight) == 2) {
+        // Szukam znaku nowej linii
+        // Jezeli po wadze bedzie opis kolejnego wierzcholka przesuwam kursor
+        // o 1 pozycje w pliku w lewo
+
+        if (store_add_edge( &(graph[line].head), vertex, weight) != 0) {
             return NULL;
-        } 
+        }
 
-        if (newline_indicator == '\n')
-            line++;
-        else {
-            // to nie jest nowa linia ale moze byc (n) znakow bialych po czym nowa linia
-            // nie uzywam newline_indicator bo nie przetrzyma EOF
-            int nline;
-
-            while ( (nline = fgetc(in)) != EOF  && isspace(nline) ) {
-                if (nline == '\n') 
-                    break;
-            }
-
-            if (nline == '\n') {
+        while ( (newline_indicator = fgetc(in)) != EOF && isspace(newline_indicator)) {
+            if (newline_indicator == '\n') {
                 line++;
-            } else {
-                fseek(in, -1, SEEK_CUR);
             }
         }
+
+        // newline_indicator jest EOF albo nie jest znakiem bialym
+        fseek(in, -1, SEEK_CUR);
     }
 
     fclose(in);
