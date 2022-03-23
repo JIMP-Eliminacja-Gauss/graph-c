@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
         j = rand() % 10 + 1;
         printf("@@@rand_j = %d\n", j);
         while (j--) {
-            if (store_init_edge(&(graph[i].head), rand() % atoi(argv[1]), 1) != 0) {
+            if (store_add_edge(&(graph[i].head), rand() % atoi(argv[1]), 1) != 0) {
                 return -1;
             }
         }

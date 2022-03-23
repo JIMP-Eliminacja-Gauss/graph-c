@@ -1,16 +1,16 @@
-CFLAGS = -ggdb -pedantic -Wextra -Wall -std=c99
+CFLAGS =-ggdb -pedantic -Wextra -Wall -std=c99
 
 store.o: store.c
-	cc $(CFLAGS) -c $^ -o $@ 
+	$(CC) $(CFLAGS) -c $^ -o $@ 
 
 file.o: file.c
-	cc $(CFLAGS) -c $^ -o $@ 
+	$(CC) $(CFLAGS) -c $^ -o $@ 
 
 test_store: store.o test/store_test.c
-	cc $(CFLAGS) $^ -o $@ 
+	$(CC) $(CFLAGS) $^ -o $@ 
 
 test_file: store.o file.o test/file_test.c
-	cc $(CFLAGS) $^ -o $@ 
+	$(CC) $(CFLAGS) $^ -o $@ 
 
 .PHONY: clean
 
