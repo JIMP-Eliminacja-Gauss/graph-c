@@ -12,58 +12,72 @@ graph_t store_init(int n_vertices) {
     }
 
     for (int i = 0; i < n_vertices; i++) {
-        new_graph[i].shortest_path = 0;
-        new_graph[i].last_vertex_index = i;
-        new_graph[i].head = NULL; 
+        new_graph[i].weight = -1;
+        new_graph[i].next = NULL;
     } 
 
     return new_graph; 
 }
 
-int store_init_edge(edge_t *head, int vertex_index, double weight) {
-    if (*head == NULL) {
-        if (MALLOC_FAILED(*head, 1)) {
-            return MEMORY_ERR;
-        }
+int store_add_edge(graph_t graph, int vertex_index, double weight, int vertex) {
+    graph_t tmp;
 
-        (*head) -> vertex_index = vertex_index;
-        (*head) -> weight = weight;
-        (*head) -> next = NULL;
-
+    if (graph[vertex].weight == -1) {
+        graph[vertex].weight = weight;
+        graph[vertex].vertex_index = vertex_index;
+        graph[vertex].next = NULL;
         return 0;
-
     }
-
-    edge_t start_pos = *head; 
-
-    while (start_pos -> next != NULL) {
-        start_pos = start_pos -> next;
+    if (graph[vertex].next == NULL) {
+        if (MALLOC_FAILED (graph[vertex].next, 1))
+            return MEMORY_ERR;
+        tmp = graph[vertex].next;
+    } else {
+        tmp = graph[vertex].next;
+        while (tmp->next != NULL)
+            tmp = tmp->next;
+        if (MALLOC_FAILED (tmp->next, 1))
+            return MEMORY_ERR;
+        tmp = tmp->next;
     }
-
-    if MALLOC_FAILED(start_pos -> next, 1) {
-        return MEMORY_ERR;
-    }
-
-    start_pos = start_pos -> next;
-
-    start_pos -> vertex_index = vertex_index;
-    start_pos -> weight = weight;
-    start_pos -> next = NULL;
-
+    
+    tmp->vertex_index = vertex_index;
+    tmp->weight = weight;
+    tmp->next = NULL;
     return 0;
+
 }
 
 void store_free(graph_t graph, int n_vertices) {
-    edge_t temp;
-    
-    for (int i = 0; i < n_vertices; i++) { 
+    graph_t temp;
+    graph_t temp2;
 
-        while (graph[i].head != NULL) {
-            temp = graph[i].head;
-            graph[i].head = graph[i].head -> next;
-            free(temp);
+    for (int i = 0; i < n_vertices; i++) { 
+        if (graph[i].next == NULL)
+            continue;
+        temp = graph[i].next;
+        temp2 = temp;
+        while (temp != NULL) {
+            temp = temp->next;
+            free(temp2);
+            temp2 = temp;
         }
     }
 
     free(graph);
+}
+
+void dijkstra_free (dijkstra_t d) {
+    free (d);
+}
+
+dijkstra_t dijkstra_init (int n_vertices) {
+    dijkstra_t d;
+    if (MALLOC_FAILED (d, n_vertices))
+        return NULL;
+    for (int i = 0; i < n_vertices; i++) {
+        d[i].shortest_path = 0;
+        d[i].last_vertex_index = 0;
+    }
+    return d;
 }

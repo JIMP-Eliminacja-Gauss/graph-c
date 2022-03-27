@@ -1,13 +1,19 @@
-CFLAGS = -ggdb -pedantic -Wextra -Wall -std=c99
+CFLAGS =-ggdb -pedantic -Wextra -Wall -std=c99
+
+graph: store.o file.o algorithm.o main.c
+	$(CC) $(CFLAGS) $^ -o $@
 
 store.o: store.c
-	cc $(CFLAGS) -c $^ -o $@ 
+	$(CC) $(CFLAGS) -c $^ -o $@ 
 
-test_store: store.o test/store_test.c
-	cc $(CFLAGS) $^ -o $@ 
+file.o: file.c
+	$(CC) $(CFLAGS) -c $^ -o $@ 
+
+algorithm.o: algorithm.c
+	$(CC) $(CFLAGS) -c $^ -o $@
 
 .PHONY: clean
 
 clean:
-	rm *.o test_store
+	rm *.o graph
 
