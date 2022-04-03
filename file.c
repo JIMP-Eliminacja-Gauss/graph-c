@@ -3,7 +3,9 @@
 
 #include "file.h"
 
-graph_t file_read(char *file_name, int *rows, int *columns) {
+#include "store.h"
+
+graph_desc_t file_read(char *file_name, int *rows, int *columns) {
     /* Format pliku
      Linijka 0: liczba_wierszy liczba_kolumn
      Linijka 1: wierzchołek1 :waga1 wierzchołek2 :waga2 ... wierzchołekn :wagan
@@ -14,25 +16,31 @@ graph_t file_read(char *file_name, int *rows, int *columns) {
     */
 
     FILE *in = fopen(file_name, "r");
+    graph_desc_t g;
     graph_t graph;
     int line = 0, vertex;
     double weight;
 
     if (in == NULL) {
+        lastError = READ_ERR;
         return NULL;
     }
 
     if (fscanf(in, "%d %d\n", rows, columns) < 2) {
         fclose(in);
+        lastError = FORMAT_ERR;
         return NULL;
     }
 
-    graph = store_init(*rows * *columns);
+    g = store_init(*rows, *columns);
 
-    if (graph == NULL) {
+    if (g == NULL) {
         fclose(in);
+        lastError = MEMORY_ERR;
         return NULL;
     }
+    
+    graph = g->graph;
 
     int newline_indicator;
     while (fscanf(in, "%d :%lf", &vertex, &weight) == 2) {
@@ -40,7 +48,7 @@ graph_t file_read(char *file_name, int *rows, int *columns) {
         // Jezeli po wadze bedzie opis kolejnego wierzcholka przesuwam kursor
         // o 1 pozycje w pliku w lewo
 
-        if (store_add_edge( graph, vertex, weight, line) != 0) {
+        if (store_add_edge (graph, vertex, weight, line) != 0) {
             return NULL;
         }
 
@@ -56,15 +64,20 @@ graph_t file_read(char *file_name, int *rows, int *columns) {
 
     fclose(in);
 
-    return graph; 
+    return g; 
 }
 
-int file_create(char *file_name, int rows, int columns, graph_t graph) {
+int file_create(char *file_name, graph_desc_t g) {
     FILE *out = fopen (file_name, "w");
-    if (out == NULL)
-        return WRITE_ERR;
-    fprintf (out, "%d %d\n", rows, columns);
-    for (int i = 0; i < rows*columns; i++) {
+    graph_t graph = g->graph;
+    int n_vertices = g->rows * g->columns;
+    if (out == NULL) {
+        lastError = WRITE_ERR;
+        return 1;
+    }
+
+    fprintf (out, "%d %d\n", g->rows, g->columns);
+    for (int i = 0; i < n_vertices; i++) {
         if (graph[i].weight == -1) {
             fprintf (out, "\n");
             continue;

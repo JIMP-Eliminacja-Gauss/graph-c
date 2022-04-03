@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include "algorithm.h"
 
+#include "store.h"
 
-int bfs (graph_t graph, int n, int start_vertex) {
+
+int bfs (graph_desc_t g, int start_vertex) {
+    graph_t graph = g->graph;
+    int n = g->rows * g->columns;  // n vertices
     int *visited = calloc (n, sizeof *(visited));
     int *queue = calloc (n, sizeof *(queue));    // calloc, bo malloc nie inicjalizuje (nie wypelnia wartosciami poczatkowymi - 0)
-    /*int visited[9] = {0};              
-    int queue[9] = {0};*/
     int k = 0;
     graph_t tmp;
 
@@ -78,7 +80,9 @@ int bfs (graph_t graph, int n, int start_vertex) {
 
 }
 
-dijkstra_t dijkstra (graph_t graph, int n, int start_vertex) {
+dijkstra_t dijkstra (graph_desc_t g, int start_vertex) {
+    graph_t graph = g->graph;
+    int n = g->rows * g->columns;
     int *visited = calloc (n, sizeof *(visited));
     int *queue = calloc (n, sizeof *(queue));
     int k = 0;
@@ -88,6 +92,7 @@ dijkstra_t dijkstra (graph_t graph, int n, int start_vertex) {
     if (d == NULL) {
         free (visited);
         free (queue);
+        lastError = MEMORY_ERR;
         return NULL;
     }
 

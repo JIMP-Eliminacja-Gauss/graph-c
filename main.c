@@ -1,6 +1,7 @@
 #include "file.h"
 #include "algorithm.h"
 #include "store.h"
+#include "generator.h"
 
 #include <stdio.h>
 #include <getopt.h>
@@ -9,13 +10,18 @@
 
 
 char *usage =
-    "Aktualnie dostępne opcje:\n"
-    "-o nazwa_pliku [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n"
-    "   -o nazwa_pliku - nazwa pliku, z którego czytamy graf\n"
-    "   -b indeks_wierzchołka - indeks wierzchołka, od którego zaczynamy BFS\n"
-    "   -p indeks_wierzchołka - indeks wierzchołka, od którego zaczynamy DIJKSTRE\n"
-    "\n"
-    "oraz -w nazwa_pliku - czyli wypisanie opisu grafu do podanego pliku\n";
+    "Generowanie grafu\n"
+    "Uzycie: %s -r liczba_wierszy -c liczba_kolumn -x waga_od_x -y waga_do_y [-w plik] [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n"
+    "           <x,y> - przedzial wag wierzcholkow\n"
+    "               jezeli plik jest dany to\n"
+    "                   wypisuje opis grafu do pliku\n"
+    "               jezeli -b indeks_wierzcholka jest dany\n"
+    "                   uzywa algorytmu BFS do sprawdzenia czy graf jest spojny zaczynajac od danego wierzcholka\n"
+    "               jezeli -p indeks_wierzcholka jest dany\n"
+    "                   uzywa algorytmu Dijkstry do znalezienia najkrotszej sciezki od danego wierzcholka do innych\n"
+    "Czytanie grafu z pliku\n"
+    "Uzycie: %s -o plik_czytany [-w plik] [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n";
+
 
 void print_dijkstra (dijkstra_t d, int n_vertices, int start_vertex) {
     printf ("wierzcholek startowy: %d\n", start_vertex);
@@ -37,15 +43,15 @@ void free_filenames (char *writefile, char *readfile) {
 int main (int argc, char **argv) {
     int rows = 0;
     int columns = 0;
-    double fromX = 0;
-    double toY = 0;
+    double fromX = 1;
+    double toY = 11;
     char *writefile = NULL;
     char *readfile = NULL;
     int bfs_start = -1;
     int dijkstra_start = -1;
     int opt;
 
-    graph_t graph = NULL;
+    graph_desc_t g = NULL;
     dijkstra_t d = NULL;
 
     while ((opt = getopt(argc, argv, "r:c:x:y:w:o:b:p:")) != -1) {
@@ -77,7 +83,8 @@ int main (int argc, char **argv) {
             dijkstra_start = atoi (optarg);
             break;
         default:
-            fprintf (stderr, usage, argv[0]);
+            fprintf (stderr, usage, argv[0], argv[0]);
+            free_filenames(readfile, writefile);
             return 1;
         }
     }
@@ -86,44 +93,38 @@ int main (int argc, char **argv) {
         for (; optind < argc; optind++)
             fprintf (stderr, "\t\"%s\"\n", argv[optind]);
         fprintf (stderr, "\n");
-        fprintf (stderr, usage, argv[0]);
+        fprintf (stderr, usage, argv[0], argv[0]);
 
         free_filenames (writefile, readfile);
         return ARGS_ERR;
     }
 
     if (readfile != NULL) {
-        graph = file_read (readfile, &rows, &columns);
-        if (graph == NULL) {
+        g = file_read (readfile, &rows, &columns);
+        if (g == NULL) {
             fprintf (stderr, "nie mogę czytać z pliku %s\n", readfile);
             free_filenames (writefile, readfile);
             return READ_ERR;
         }
-    } else if (rows != 0 && columns != 0 && fromX != 0 && toY != 0) {
-        /*if (fromX > toY) {
-            fprintf (stderr, "złe parametry - fromX > toY\n");
-            return 1;
-        }
-        struktura_t = generate (rows, columns, fromX, toY);
-        if (struktura_t == NULL) {
-            fprintf (stderr, "niewystarczająca ilość pamięci\n");
-            return 4;
-        if (writefile != NULL) {
-            if (file_create (writefile, rows, columns, struktura_t) == 1)
-                fprintf (stderr, "nie mogę pisać do pliku %s\n", writefile);
-        }*/
-        fprintf (stderr, "generowanie grafu aktualnie nie dostępne\n");
+    } else if (rows > 0 && columns > 0 && fromX >= 0 && toY >= 0) { 
+        if (fromX > toY)
+            return ARGS_ERR;
+
+        g = generate_grid(rows, columns, fromX, toY);
+        if (g == NULL) 
+            return lastError;
+
     } else {
-        fprintf (stderr, usage, argv[0]);
+        fprintf (stderr, usage, argv[0], argv[0]);
         return ARGS_ERR;
     }
 
     if (writefile != NULL) 
-        if (file_create (writefile, rows, columns, graph) == WRITE_ERR)
+        if (file_create (writefile, g) == WRITE_ERR)
             fprintf (stderr, "nie mogę pisać do pliku %s\n", writefile);
 
     if (bfs_start >= 0) {
-        if (bfs (graph, rows*columns, bfs_start) == 0)
+        if (bfs (g, bfs_start) == 0)
             printf ("graf jest spójny\n");
         else
             printf ("graf nie jest spójny\n");
@@ -132,13 +133,13 @@ int main (int argc, char **argv) {
     }
 
     if (dijkstra_start >= 0) {
-        d = dijkstra (graph, rows*columns, dijkstra_start);
+        d = dijkstra (g, dijkstra_start);
         print_dijkstra (d, rows*columns, dijkstra_start);
     } else if (dijkstra_start != -1) {
         fprintf (stderr, "podany indeks wierzchołka do dijkstry powinien być >= 0\n");
     }
 
-    store_free (graph, rows*columns);
+    store_free (g);
     dijkstra_free (d);
     free (readfile);
     free (writefile);

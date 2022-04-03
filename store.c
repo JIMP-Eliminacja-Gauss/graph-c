@@ -1,19 +1,31 @@
 #include "store.h"
+int lastError = 0;
 
 #include <stdlib.h>
 
 #define MALLOC_FAILED(PTR, SIZE) ( ((PTR) = malloc(sizeof *(PTR) * (SIZE))) == NULL )
 
-graph_t store_init(int n_vertices) {
-    graph_t new_graph;
+graph_desc_t store_init(int rows, int columns) {
+    graph_desc_t new_graph;
+    int n_vertices = rows*columns;
 
-    if MALLOC_FAILED(new_graph, n_vertices) {
+    if MALLOC_FAILED(new_graph, 1) {
+        lastError = MEMORY_ERR;
+        return NULL;
+    }
+
+    new_graph->rows = rows;
+    new_graph->columns = columns;
+
+    if MALLOC_FAILED(new_graph->graph, n_vertices) {
+        lastError = MEMORY_ERR;
+        free(new_graph);
         return NULL;
     }
 
     for (int i = 0; i < n_vertices; i++) {
-        new_graph[i].weight = -1;
-        new_graph[i].next = NULL;
+        new_graph->graph[i].weight = -1;
+        new_graph->graph[i].next = NULL;
     } 
 
     return new_graph; 
@@ -29,15 +41,23 @@ int store_add_edge(graph_t graph, int vertex_index, double weight, int vertex) {
         return 0;
     }
     if (graph[vertex].next == NULL) {
-        if (MALLOC_FAILED (graph[vertex].next, 1))
-            return MEMORY_ERR;
+        if (MALLOC_FAILED (graph[vertex].next, 1)) { 
+            lastError = MEMORY_ERR;
+            return 1;
+        }
+
         tmp = graph[vertex].next;
     } else {
         tmp = graph[vertex].next;
+
         while (tmp->next != NULL)
             tmp = tmp->next;
-        if (MALLOC_FAILED (tmp->next, 1))
-            return MEMORY_ERR;
+
+        if (MALLOC_FAILED (tmp->next, 1)) {
+            lastError = MEMORY_ERR;
+            return 1; 
+        }
+
         tmp = tmp->next;
     }
     
@@ -48,7 +68,9 @@ int store_add_edge(graph_t graph, int vertex_index, double weight, int vertex) {
 
 }
 
-void store_free(graph_t graph, int n_vertices) {
+void store_free(graph_desc_t g) {
+    graph_t graph = g->graph;
+    int n_vertices = g->rows * g->columns;
     graph_t temp;
     graph_t temp2;
 
@@ -64,7 +86,8 @@ void store_free(graph_t graph, int n_vertices) {
         }
     }
 
-    free(graph);
+    free(g->graph);
+    free(g);
 }
 
 void dijkstra_free (dijkstra_t d) {
@@ -73,8 +96,11 @@ void dijkstra_free (dijkstra_t d) {
 
 dijkstra_t dijkstra_init (int n_vertices) {
     dijkstra_t d;
-    if (MALLOC_FAILED (d, n_vertices))
+    if (MALLOC_FAILED (d, n_vertices)) {
+        lastError = MEMORY_ERR;
         return NULL;
+    }
+
     for (int i = 0; i < n_vertices; i++) {
         d[i].shortest_path = 0;
         d[i].last_vertex_index = 0;
