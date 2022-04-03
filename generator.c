@@ -13,7 +13,14 @@ static int add_pair(graph_t graph, int vertex_index, int vertex, double weight) 
     return 0;
 }
 
-graph_desc_t generate_grid(int rows, int columns, double x, double y) {
+static int make_connection(double probability) {
+    int border = probability * RAND_MAX;
+    int value = rand();
+
+    return border >= value ? 1 : 0;
+}
+
+graph_desc_t generate_grid(int rows, int columns, double x, double y, double probability) {
     graph_desc_t g = store_init(rows, columns);
     double weight;
     graph_t graph;
@@ -29,13 +36,13 @@ graph_desc_t generate_grid(int rows, int columns, double x, double y) {
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
-            if (j < columns - 1) {
+
+            if (j < columns - 1 && make_connection(probability)) {
                 weight = (rand() / (double)RAND_MAX) * (y - x) + x;
-                add_pair(graph, i * columns + j, i * columns + j + 1, weight);
-                
+                add_pair(graph, i * columns + j, i * columns + j + 1, weight); 
             }
 
-            if (i < rows - 1) { 
+            if (i < rows - 1 && make_connection(probability)) { 
                 weight = (rand() / (double)RAND_MAX) * (y - x) + x;
                 add_pair(graph, i * columns + j, (i + 1) * columns + j, weight);
             }

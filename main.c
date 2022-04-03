@@ -11,7 +11,7 @@
 
 char *usage =
     "Generowanie grafu\n"
-    "Uzycie: %s -r liczba_wierszy -c liczba_kolumn -x waga_od_x -y waga_do_y [-w plik] [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n"
+    "Uzycie: %s -r liczba_wierszy -c liczba_kolumn -x waga_od_x -y waga_do_y [-w plik] [-b indeks_wierzcholka] [-p indeks_wierzcholka] [-d prawdopodobienstwo]\n"
     "           <x,y> - przedzial wag wierzcholkow\n"
     "               jezeli plik jest dany to\n"
     "                   wypisuje opis grafu do pliku\n"
@@ -19,6 +19,8 @@ char *usage =
     "                   uzywa algorytmu BFS do sprawdzenia czy graf jest spojny zaczynajac od danego wierzcholka\n"
     "               jezeli -p indeks_wierzcholka jest dany\n"
     "                   uzywa algorytmu Dijkstry do znalezienia najkrotszej sciezki od danego wierzcholka do innych\n"
+    "               jezeli -d prawdopodobienstwo jest dany\n"
+    "                   generuje krawedzie w grafie z podanym prawdopodobienstwem\n"
     "Czytanie grafu z pliku\n"
     "Uzycie: %s -o plik_czytany [-w plik] [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n";
 
@@ -45,6 +47,7 @@ int main (int argc, char **argv) {
     int columns = 0;
     double fromX = 1;
     double toY = 11;
+    double probability = 1;
     char *writefile = NULL;
     char *readfile = NULL;
     int bfs_start = -1;
@@ -54,7 +57,7 @@ int main (int argc, char **argv) {
     graph_desc_t g = NULL;
     dijkstra_t d = NULL;
 
-    while ((opt = getopt(argc, argv, "r:c:x:y:w:o:b:p:")) != -1) {
+    while ((opt = getopt(argc, argv, "r:c:x:y:w:o:b:p:d:")) != -1) {
         switch (opt) {
         case 'r':
             rows = atoi (optarg);
@@ -81,6 +84,9 @@ int main (int argc, char **argv) {
             break;
         case 'p':
             dijkstra_start = atoi (optarg);
+            break;
+        case 'd':
+            probability = atof (optarg);
             break;
         default:
             fprintf (stderr, usage, argv[0], argv[0]);
@@ -110,7 +116,12 @@ int main (int argc, char **argv) {
         if (fromX > toY)
             return ARGS_ERR;
 
-        g = generate_grid(rows, columns, fromX, toY);
+        if (probability > 1 || probability < 0) {
+            fprintf(stderr, "Prawdopodobienstwo powinno zostac wybrane z przedzialu <0, 1>\n");
+            return ARGS_ERR;
+        }
+
+        g = generate_grid(rows, columns, fromX, toY, probability);
         if (g == NULL) 
             return lastError;
 
