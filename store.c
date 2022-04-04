@@ -72,17 +72,12 @@ void store_free(graph_desc_t g) {
     graph_t graph = g->graph;
     int n_vertices = g->rows * g->columns;
     graph_t temp;
-    graph_t temp2;
 
     for (int i = 0; i < n_vertices; i++) { 
-        if (graph[i].next == NULL)
-            continue;
-        temp = graph[i].next;
-        temp2 = temp;
-        while (temp != NULL) {
-            temp = temp->next;
-            free(temp2);
-            temp2 = temp;
+        while (graph[i].next != NULL) {
+            temp = graph[i].next;
+            graph[i].next = graph[i].next -> next;
+            free(temp);
         }
     }
 
