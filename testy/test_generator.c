@@ -35,12 +35,13 @@ int main (int argc, char **argv) {
     }
     double x = argc > 3 ? atof (argv[3]) : 1;
     double y = argc > 4 ? atof (argv[4]) : x + 10;
+    double probability = argc > 5 ? atof(argv[5]) : 1;
     if (x > y) {
         printf ("podano zły przedział wag - x powinno być większe od y\n");
         return 1;
     }
     graph_desc_t g;
-    g = generate_grid (rows, columns, x, y);
+    g = generate_grid (rows, columns, x, y, probability);
     print_struct (g);
     return 0;
 }
