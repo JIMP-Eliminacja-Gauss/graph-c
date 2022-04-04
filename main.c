@@ -11,8 +11,10 @@
 
 char *usage =
     "Generowanie grafu\n"
-    "Uzycie: %s -r liczba_wierszy -c liczba_kolumn -x waga_od_x -y waga_do_y [-w plik] [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n"
-    "           <x,y> - przedzial wag wierzcholkow\n"
+    "Uzycie: %s -r liczba_wierszy -c liczba_kolumn [-x waga_od_x [-y waga_do_y]] [-w plik] [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n"
+    "               <x,y> - przedzial wag wierzcholkow\n"
+    "                   jeżeli nie podano x i y to domyślnie x = 1, y = 11\n"
+    "                   jeżeli podano samo x to y domyślnie = x+10\n"
     "               jezeli plik jest dany to\n"
     "                   wypisuje opis grafu do pliku\n"
     "               jezeli -b indeks_wierzcholka jest dany\n"
@@ -58,9 +60,19 @@ int main (int argc, char **argv) {
         switch (opt) {
         case 'r':
             rows = atoi (optarg);
+            if (rows < 1) {
+                fprintf (stderr, "podana liczba wierszy powinna być większa od 0\n");
+                free_filenames (writefile, readfile);
+                return ARGS_ERR;
+            }
             break;
         case 'c':
             columns = atoi (optarg);
+            if (columns < 1) {
+                fprintf (stderr, "podana liczba kolumn powinna być większa od 0\n");
+                free_filenames (writefile, readfile);
+                return ARGS_ERR;
+            }
             break;
         case 'x':
             fromX = atof (optarg);
@@ -85,7 +97,7 @@ int main (int argc, char **argv) {
         default:
             fprintf (stderr, usage, argv[0], argv[0]);
             free_filenames(readfile, writefile);
-            return 1;
+            return ARGS_ERR;
         }
     }
     if (optind < argc) {
@@ -106,16 +118,21 @@ int main (int argc, char **argv) {
             free_filenames (writefile, readfile);
             return READ_ERR;
         }
-    } else if (rows > 0 && columns > 0 && fromX >= 0 && toY >= 0) { 
-        if (fromX > toY)
+    } else if (rows != 0) {     // plik, z którego czytamy nie jest dany i została podana liczba wierszy więc generujemy graf
+        if (fromX != 1 && toY == 11)
+            toY = fromX + 10;
+        if (fromX > toY) {
+            fprintf (stderr, "podano nieprawidłowy przedział wag <x,y> - podane x jest większe od y\n");
+            free_filenames (writefile, readfile);
             return ARGS_ERR;
+        }
 
         g = generate_grid(rows, columns, fromX, toY);
         if (g == NULL) 
             return lastError;
-
     } else {
         fprintf (stderr, usage, argv[0], argv[0]);
+        free_filenames (writefile, readfile);
         return ARGS_ERR;
     }
 
@@ -123,20 +140,21 @@ int main (int argc, char **argv) {
         if (file_create (writefile, g) == WRITE_ERR)
             fprintf (stderr, "nie mogę pisać do pliku %s\n", writefile);
 
-    if (bfs_start >= 0) {
+
+    if (bfs_start >= 0 && bfs_start < g->rows*g->columns) {
         if (bfs (g, bfs_start) == 0)
             printf ("graf jest spójny\n");
         else
             printf ("graf nie jest spójny\n");
     } else if (bfs_start != -1) {
-        fprintf (stderr, "podany indeks wierzchołka do bfs powinien być >= 0\n");
+        fprintf (stderr, "podany indeks wierzchołka do bfs powinien być większy bądź równy 0 i mniejszy od liczby wierzchołków grafu\n");
     }
 
-    if (dijkstra_start >= 0) {
+    if (dijkstra_start >= 0 && dijkstra_start < g->rows*g->columns) {
         d = dijkstra (g, dijkstra_start);
         print_dijkstra (d, rows*columns, dijkstra_start);
     } else if (dijkstra_start != -1) {
-        fprintf (stderr, "podany indeks wierzchołka do dijkstry powinien być >= 0\n");
+        fprintf (stderr, "podany indeks wierzchołka do dijkstry powinien być większy bądź równy 0 i mniejszy od liczby wierzchołków grafu\n");
     }
 
     store_free (g);
