@@ -5,7 +5,7 @@
 
 #include "store.h"
 
-graph_desc_t file_read(char *file_name, int *rows, int *columns) {
+graph_t file_read(char *file_name, int *rows, int *columns) {
     /* Format pliku
      Linijka 0: liczba_wierszy liczba_kolumn
      Linijka 1: wierzchołek1 :waga1 wierzchołek2 :waga2 ... wierzchołekn :wagan
@@ -16,8 +16,8 @@ graph_desc_t file_read(char *file_name, int *rows, int *columns) {
     */
 
     FILE *in = fopen(file_name, "r");
-    graph_desc_t g;
-    graph_t graph;
+    graph_t g;
+    edge_t edge;
     int line = 0, vertex;
     double weight;
 
@@ -40,7 +40,7 @@ graph_desc_t file_read(char *file_name, int *rows, int *columns) {
         return NULL;
     }
     
-    graph = g->graph;
+    edge = g->edge;
 
     int newline_indicator;
     while (fscanf(in, "%d :%lf", &vertex, &weight) == 2) {
@@ -48,7 +48,7 @@ graph_desc_t file_read(char *file_name, int *rows, int *columns) {
         // Jezeli po wadze bedzie opis kolejnego wierzcholka przesuwam kursor
         // o 1 pozycje w pliku w lewo
 
-        if (store_add_edge (graph, vertex, weight, line) != 0) {
+        if (store_add_edge (edge, vertex, weight, line) != 0) {
             return NULL;
         }
 
@@ -67,9 +67,9 @@ graph_desc_t file_read(char *file_name, int *rows, int *columns) {
     return g; 
 }
 
-int file_create(char *file_name, graph_desc_t g) {
+int file_create(char *file_name, graph_t g) {
     FILE *out = fopen (file_name, "w");
-    graph_t graph = g->graph;
+    edge_t edge = g->edge;
     int n_vertices = g->rows * g->columns;
     if (out == NULL) {
         lastError = WRITE_ERR;
@@ -78,12 +78,12 @@ int file_create(char *file_name, graph_desc_t g) {
 
     fprintf (out, "%d %d\n", g->rows, g->columns);
     for (int i = 0; i < n_vertices; i++) {
-        if (graph[i].weight == -1) {
+        if (edge[i].weight == -1) {
             fprintf (out, "\n");
             continue;
         }
-        fprintf (out, "%d :%.16lf ", graph[i].vertex_index, graph[i].weight);
-        graph_t tmp = graph[i].next;
+        fprintf (out, "%d :%.16lf ", edge[i].vertex_index, edge[i].weight);
+        edge_t tmp = edge[i].next;
         while (tmp != NULL) {
             fprintf (out, "%d :%.16lf ", tmp->vertex_index, tmp->weight);
             tmp = tmp->next;

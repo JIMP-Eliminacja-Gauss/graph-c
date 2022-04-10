@@ -5,8 +5,8 @@ int lastError = 0;
 
 #define MALLOC_FAILED(PTR, SIZE) ( ((PTR) = malloc(sizeof *(PTR) * (SIZE))) == NULL )
 
-graph_desc_t store_init(int rows, int columns) {
-    graph_desc_t new_graph;
+graph_t store_init(int rows, int columns) {
+    graph_t new_graph;
     int n_vertices = rows*columns;
 
     if MALLOC_FAILED(new_graph, 1) {
@@ -17,38 +17,38 @@ graph_desc_t store_init(int rows, int columns) {
     new_graph->rows = rows;
     new_graph->columns = columns;
 
-    if MALLOC_FAILED(new_graph->graph, n_vertices) {
+    if MALLOC_FAILED(new_graph->edge, n_vertices) {
         lastError = MEMORY_ERR;
         free(new_graph);
         return NULL;
     }
 
     for (int i = 0; i < n_vertices; i++) {
-        new_graph->graph[i].weight = -1;
-        new_graph->graph[i].next = NULL;
+        new_graph->edge[i].weight = -1;
+        new_graph->edge[i].next = NULL;
     } 
 
     return new_graph; 
 }
 
-int store_add_edge(graph_t graph, int vertex_index, double weight, int vertex) {
-    graph_t tmp;
+int store_add_edge(edge_t edge, int vertex_index, double weight, int vertex) {
+    edge_t tmp;
 
-    if (graph[vertex].weight == -1) {
-        graph[vertex].weight = weight;
-        graph[vertex].vertex_index = vertex_index;
-        graph[vertex].next = NULL;
+    if (edge[vertex].weight == -1) {
+        edge[vertex].weight = weight;
+        edge[vertex].vertex_index = vertex_index;
+        edge[vertex].next = NULL;
         return 0;
     }
-    if (graph[vertex].next == NULL) {
-        if (MALLOC_FAILED (graph[vertex].next, 1)) { 
+    if (edge[vertex].next == NULL) {
+        if (MALLOC_FAILED (edge[vertex].next, 1)) { 
             lastError = MEMORY_ERR;
             return 1;
         }
 
-        tmp = graph[vertex].next;
+        tmp = edge[vertex].next;
     } else {
-        tmp = graph[vertex].next;
+        tmp = edge[vertex].next;
 
         while (tmp->next != NULL)
             tmp = tmp->next;
@@ -68,20 +68,20 @@ int store_add_edge(graph_t graph, int vertex_index, double weight, int vertex) {
 
 }
 
-void store_free(graph_desc_t g) {
-    graph_t graph = g->graph;
+void store_free(graph_t g) {
+    edge_t edge = g->edge;
     int n_vertices = g->rows * g->columns;
-    graph_t temp;
+    edge_t temp;
 
     for (int i = 0; i < n_vertices; i++) { 
-        while (graph[i].next != NULL) {
-            temp = graph[i].next;
-            graph[i].next = graph[i].next -> next;
+        while (edge[i].next != NULL) {
+            temp = edge[i].next;
+            edge[i].next = edge[i].next -> next;
             free(temp);
         }
     }
 
-    free(g->graph);
+    free(g->edge);
     free(g);
 }
 

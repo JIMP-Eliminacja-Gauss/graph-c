@@ -4,15 +4,15 @@
 #include <stdlib.h>
 
 
-void print_struct (graph_desc_t g) {
+void print_struct (graph_t g) {
     int rows = g->rows;
     int columns = g->columns;
-    graph_t graph = g->graph;
-    graph_t tmp;
+    edge_t edge = g->edge;
+    edge_t tmp;
 
     for (int i = 0; i < rows*columns; i++) {
         fprintf (stdout, "%d. \n", i);
-        tmp = &(graph[i]);
+        tmp = &(edge[i]);
         while (tmp != NULL) {
             fprintf (stdout, "\tvertex index = %d, weight = %.16lf\n", tmp->vertex_index, tmp->weight);
             tmp = tmp->next;
@@ -40,7 +40,7 @@ int main (int argc, char **argv) {
         printf ("podano zły przedział wag - x powinno być większe od y\n");
         return 1;
     }
-    graph_desc_t g;
+    graph_t g;
     g = generate_grid (rows, columns, x, y, probability);
     print_struct (g);
     return 0;

@@ -5,13 +5,13 @@
 #include "store.h"
 
 
-int bfs (graph_desc_t g, int start_vertex) {
-    graph_t graph = g->graph;
+int bfs (graph_t g, int start_vertex) {
+    edge_t edge = g->edge;
     int n = g->rows * g->columns;  // n vertices
     int *visited = calloc (n, sizeof *(visited));
     int *queue = calloc (n, sizeof *(queue));    // calloc, bo malloc nie inicjalizuje (nie wypelnia wartosciami poczatkowymi - 0)
     int k = 0;
-    graph_t tmp;
+    edge_t tmp;
 
     visited[start_vertex] = 1;    /* ustawiamy wierzchołek, od którego zaczynamy jako odwiedzony
                                     
@@ -49,19 +49,19 @@ int bfs (graph_desc_t g, int start_vertex) {
             free (queue);
             return 0;
         }
-        if (graph[queue[i]].weight == -1)
+        if (edge[queue[i]].weight == -1)
             continue;
 
-        int *ifvisited = &visited[graph[queue[i]].vertex_index];   // jezeli = 1 to wierzchołek, z którym aktualnie badany wierzchołek ma krawędź był już odwiedzony
+        int *ifvisited = &visited[edge[queue[i]].vertex_index];   // jezeli = 1 to wierzchołek, z którym aktualnie badany wierzchołek ma krawędź był już odwiedzony
         if ( *ifvisited != 1) {
-            queue[k] = graph[queue[i]].vertex_index;
+            queue[k] = edge[queue[i]].vertex_index;
             if (k != n-1)
                 queue[k+1] = -1;
             k++;
             *ifvisited = 1;
         }
 
-        tmp = graph[queue[i]].next;
+        tmp = edge[queue[i]].next;
         while (tmp != NULL) {
             if (visited[tmp->vertex_index] != 1) {
                 visited[tmp->vertex_index] = 1;
@@ -80,13 +80,13 @@ int bfs (graph_desc_t g, int start_vertex) {
 
 }
 
-dijkstra_t dijkstra (graph_desc_t g, int start_vertex) {
-    graph_t graph = g->graph;
+dijkstra_t dijkstra (graph_t g, int start_vertex) {
+    edge_t edge = g->edge;
     int n = g->rows * g->columns;
     int *visited = calloc (n, sizeof *(visited));
     int *queue = calloc (n, sizeof *(queue));
     int k = 0;
-    graph_t tmp;
+    edge_t tmp;
 
     dijkstra_t d = dijkstra_init (n);
     if (d == NULL) {
@@ -108,25 +108,25 @@ dijkstra_t dijkstra (graph_desc_t g, int start_vertex) {
             free (queue);
             return d;
         }
-        if (graph[queue[i]].weight == -1)
+        if (edge[queue[i]].weight == -1)
             continue;
 
-        if (visited[graph[queue[i]].vertex_index] != 1) {
-            queue[k] = graph[queue[i]].vertex_index;
+        if (visited[edge[queue[i]].vertex_index] != 1) {
+            queue[k] = edge[queue[i]].vertex_index;
             if (k != n-1)
                 queue[k+1] = -1;
             k++;
-            visited[graph[queue[i]].vertex_index] = 1;
+            visited[edge[queue[i]].vertex_index] = 1;
         }
 
         /* DIJKSTRA */
-        double *edge_vertex_sp = &d[graph[queue[i]].vertex_index].shortest_path;       // sp - shortest_path   długość najkrótszej ścieżki od wierzchołka startowego do wierzchołka, z którym aktualnie
+        double *edge_vertex_sp = &d[edge[queue[i]].vertex_index].shortest_path;       // sp - shortest_path   długość najkrótszej ścieżki od wierzchołka startowego do wierzchołka, z którym aktualnie
                                                                                        //                      badany wierzchołek ma krawędź
 
         double *current_vertex_sp = &d[queue[i]].shortest_path;                        // dlugosc najkrotszej sciezki od wierzcholka startowego do aktualnie badanego wierzcholka
-        double *edge_weight = &graph[queue[i]].weight;                                 // waga przejścia z aktualnie badanego wierzchołka na wierzchołek, z którym ma krawędź
+        double *edge_weight = &edge[queue[i]].weight;                                 // waga przejścia z aktualnie badanego wierzchołka na wierzchołek, z którym ma krawędź
 
-        int *edge_vertex_lvi = &d[graph[queue[i]].vertex_index].last_vertex_index;     // lvi - last_vertex_index   indeks poprzedniego wierzchołka, z którego wcześniej przeszliśmy na ten wierzchołek, z 
+        int *edge_vertex_lvi = &d[edge[queue[i]].vertex_index].last_vertex_index;     // lvi - last_vertex_index   indeks poprzedniego wierzchołka, z którego wcześniej przeszliśmy na ten wierzchołek, z 
                                                                                        //                           którym aktualnie badany wierzchołek ma krawędź
 
         if ( (*edge_vertex_sp) == 0 || (*edge_vertex_sp) > (*current_vertex_sp) + (*edge_weight) ) {
@@ -135,7 +135,7 @@ dijkstra_t dijkstra (graph_desc_t g, int start_vertex) {
         }
         /* DIJKSTRA */
 
-        tmp = graph[queue[i]].next;
+        tmp = edge[queue[i]].next;
         while (tmp != NULL) {
             if (visited[tmp->vertex_index] != 1) {
                 visited[tmp->vertex_index] = 1;
