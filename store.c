@@ -25,6 +25,7 @@ graph_t store_init(int rows, int columns) {
 
     for (int i = 0; i < n_vertices; i++) {
         new_graph->edge[i].weight = -1;
+        new_graph->edge[i].vertex_index = -1;
         new_graph->edge[i].next = NULL;
     } 
 

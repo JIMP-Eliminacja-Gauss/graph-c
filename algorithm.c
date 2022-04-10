@@ -7,9 +7,9 @@
 
 int bfs (graph_t g, int start_vertex) {
     edge_t edge = g->edge;
-    int n = g->rows * g->columns;  // n vertices
+    int n = g->rows * g->columns;  
     int *visited = calloc (n, sizeof *(visited));
-    int *queue = calloc (n, sizeof *(queue));    // calloc, bo malloc nie inicjalizuje (nie wypelnia wartosciami poczatkowymi - 0)
+    int *queue = calloc (n, sizeof *(queue));    
     int k = 0;
     edge_t tmp;
 
@@ -49,16 +49,16 @@ int bfs (graph_t g, int start_vertex) {
             free (queue);
             return 0;
         }
-        if (edge[queue[i]].weight == -1)
+        if (edge[queue[i]].weight == -1 && edge[queue[i]].vertex_index == -1)  // waga -1 i wierzchołek na który przechodzimy z badanego -1 czyli nie ma krawędzi
             continue;
 
-        int *ifvisited = &visited[edge[queue[i]].vertex_index];   // jezeli = 1 to wierzchołek, z którym aktualnie badany wierzchołek ma krawędź był już odwiedzony
-        if ( *ifvisited != 1) {
-            queue[k] = edge[queue[i]].vertex_index;
+        int current = edge[queue[i]].vertex_index;   // indeks wierzchołka, z którym aktualnie badany wierzchołek ma krawędź - jeżeli nie był odwiedzony to dodajemy do kolejki */
+        if (visited[current] != 1) {
+            queue[k] = current;
             if (k != n-1)
                 queue[k+1] = -1;
             k++;
-            *ifvisited = 1;
+            visited[current] = 1;
         }
 
         tmp = edge[queue[i]].next;
@@ -108,18 +108,19 @@ dijkstra_t dijkstra (graph_t g, int start_vertex) {
             free (queue);
             return d;
         }
-        if (edge[queue[i]].weight == -1)
+        if (edge[queue[i]].weight == -1 && edge[queue[i]].vertex_index == -1)
             continue;
-
-        if (visited[edge[queue[i]].vertex_index] != 1) {
-            queue[k] = edge[queue[i]].vertex_index;
+        
+        int current = edge[queue[i]].vertex_index;
+        if (visited[current] != 1) {
+            queue[k] = current;
             if (k != n-1)
                 queue[k+1] = -1;
             k++;
-            visited[edge[queue[i]].vertex_index] = 1;
+            visited[current] = 1;
         }
 
-        /* DIJKSTRA */
+
         double *edge_vertex_sp = &d[edge[queue[i]].vertex_index].shortest_path;       // sp - shortest_path   długość najkrótszej ścieżki od wierzchołka startowego do wierzchołka, z którym aktualnie
                                                                                        //                      badany wierzchołek ma krawędź
 
@@ -128,12 +129,19 @@ dijkstra_t dijkstra (graph_t g, int start_vertex) {
 
         int *edge_vertex_lvi = &d[edge[queue[i]].vertex_index].last_vertex_index;     // lvi - last_vertex_index   indeks poprzedniego wierzchołka, z którego wcześniej przeszliśmy na ten wierzchołek, z 
                                                                                        //                           którym aktualnie badany wierzchołek ma krawędź
+        if ( (*edge_weight) <= 0) { // waga krawędzi powinna być większa od 0
+            lastError = FORMAT_ERR;
+            free (visited);
+            free (queue);
+            free (d);
+            return NULL;
+        }
 
         if ( (*edge_vertex_sp) == 0 || (*edge_vertex_sp) > (*current_vertex_sp) + (*edge_weight) ) {
             *edge_vertex_sp = (*current_vertex_sp) + (*edge_weight);
             *edge_vertex_lvi = queue[i];
         }
-        /* DIJKSTRA */
+
 
         tmp = edge[queue[i]].next;
         while (tmp != NULL) {
@@ -145,17 +153,25 @@ dijkstra_t dijkstra (graph_t g, int start_vertex) {
                 k++;
             }
 
-            /* DIJKSTRA */
+    
             edge_vertex_sp = &d[tmp->vertex_index].shortest_path;
             current_vertex_sp = &d[queue[i]].shortest_path;
             edge_weight = &tmp->weight;
             edge_vertex_lvi = &d[tmp->vertex_index].last_vertex_index;
-
+            
+            if ( (*edge_weight) <= 0) {
+                lastError = FORMAT_ERR;
+                free (visited);
+                free (queue);
+                free (d);
+                return NULL;
+            }
+            
             if ( (*edge_vertex_sp) == 0 || (*edge_vertex_sp) > (*current_vertex_sp) + (*edge_weight) ) {
                 *edge_vertex_sp = (*current_vertex_sp) + (*edge_weight);
                 *edge_vertex_lvi = queue[i];
             }
-            /* DIJKSTRA */
+        
 
             tmp = tmp->next;
         }

@@ -26,10 +26,10 @@ char *usage =
 
 
 void print_dijkstra (dijkstra_t d, int n_vertices, int start_vertex) {
-    printf ("wierzcholek startowy: %d\n", start_vertex);
+    printf ("wierzcholek startowy do dijkstry: %d\n", start_vertex);
 
     for (int i = 0; i < n_vertices; i++)
-        if (i != start_vertex)
+        if (i != start_vertex && d[i].shortest_path != 0)   /* bo jak = 0 to z danego wierzchołka źródłowego nie ma przejścia na dany wierzchołek */
             printf ("najkrotsza droga do %d = %g\n", i, d[i].shortest_path);
 
     printf ("\n");
@@ -53,6 +53,7 @@ int main (int argc, char **argv) {
     int bfs_start = -1;
     int dijkstra_start = -1;
     int opt;
+    int p_given = 0;
 
     graph_t g = NULL;
     dijkstra_t d = NULL;
@@ -93,6 +94,7 @@ int main (int argc, char **argv) {
             bfs_start = atoi (optarg);
             break;
         case 'p':
+            p_given = 1;
             dijkstra_start = atoi (optarg);
             break;
         case 'd':
@@ -122,7 +124,7 @@ int main (int argc, char **argv) {
             free_filenames (writefile, readfile);
             return READ_ERR;
         }
-    } else if (rows != 0) {     // plik, z którego czytamy nie jest dany i została podana liczba wierszy więc generujemy graf
+    } else if (rows != 0 && columns != 0) {     // plik, z którego czytamy nie jest dany i została podana liczba wierszy i kolumn więc generujemy graf
         if (fromX != 1 && toY == 11)
             toY = fromX + 10;
         if (fromX > toY) {
@@ -161,9 +163,17 @@ int main (int argc, char **argv) {
 
     if (dijkstra_start >= 0 && dijkstra_start < g->rows*g->columns) {
         d = dijkstra (g, dijkstra_start);
-        print_dijkstra (d, rows*columns, dijkstra_start);
-    } else if (dijkstra_start != -1) {
-        fprintf (stderr, "podany indeks wierzchołka do dijkstry powinien być większy bądź równy 0 i mniejszy od liczby wierzchołków grafu\n");
+        if (d != NULL) {
+            print_dijkstra (d, rows*columns, dijkstra_start);
+        } else if (lastError == MEMORY_ERR) {
+            free_filenames (writefile, readfile);
+            store_free (g);
+            return MEMORY_ERR;
+        } else if (lastError == FORMAT_ERR) {
+            fprintf (stderr, "wagi krawędzi do Dijkstry powinny być większe od 0\n");
+        }
+    } else if (p_given == 1) {
+        fprintf (stderr, "podany indeks wierzchołka do dijkstry powinien być większy bądź równy 0 i mniejszy od liczby wierzchołków grafu, a początek przedziału\n");
     }
 
     store_free (g);

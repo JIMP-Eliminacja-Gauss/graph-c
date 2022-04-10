@@ -4,7 +4,7 @@ all: graph
 
 test: testy/test_algorithm testy/test_generator testy/test_store testy/test_file
 	./testy/test_generator 1 3 5 12 
-	./testy/test_algorithm dane/mygraph 1 3
+	./testy/test_algorithm 1 3 1
 	./testy/test_store 10 10
 	./testy/test_file dane/mygraph
 
