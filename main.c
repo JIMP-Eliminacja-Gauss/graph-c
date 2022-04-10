@@ -21,8 +21,9 @@ char *usage =
     "                   uzywa algorytmu Dijkstry do znalezienia najkrotszej sciezki od danego wierzcholka do innych\n"
     "               jezeli -d prawdopodobienstwo jest dany\n"
     "                   generuje krawedzie w grafie z podanym prawdopodobienstwem\n"
-    "Czytanie grafu z pliku\n"
-    "Uzycie: %s -o plik_czytany [-w plik] [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n";
+    
+    "\nCzytanie grafu z pliku\n"
+    "Uzycie: %s -o plik_czytany [-b indeks_wierzcholka] [-p indeks_wierzcholka]\n";
 
 
 void print_dijkstra (dijkstra_t d, int n_vertices, int start_vertex) {
@@ -139,15 +140,17 @@ int main (int argc, char **argv) {
         g = generate_grid(rows, columns, fromX, toY, probability);
         if (g == NULL) 
             return lastError;
+
+
+        if (writefile != NULL) 
+            if (file_create (writefile, g) == WRITE_ERR)
+                fprintf (stderr, "nie mogę pisać do pliku %s\n", writefile);
+
     } else {
         fprintf (stderr, usage, argv[0], argv[0]);
         free_filenames (writefile, readfile);
         return ARGS_ERR;
-    }
-
-    if (writefile != NULL) 
-        if (file_create (writefile, g) == WRITE_ERR)
-            fprintf (stderr, "nie mogę pisać do pliku %s\n", writefile);
+    } 
 
 
     if (bfs_start >= 0 && bfs_start < g->rows*g->columns) {
