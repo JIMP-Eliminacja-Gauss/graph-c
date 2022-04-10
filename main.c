@@ -29,7 +29,7 @@ void print_dijkstra (dijkstra_t d, int n_vertices, int start_vertex) {
     printf ("wierzcholek startowy do dijkstry: %d\n", start_vertex);
 
     for (int i = 0; i < n_vertices; i++)
-        if (i != start_vertex && d[i].shortest_path != 0)   /* bo jak = 0 to z danego wierzchołka źródłowego nie ma przejścia na dany wierzchołek */
+        if (i != start_vertex && d[i].shortest_path != 0)   /* bo jak = 0 to z danego wierzchołka źródłowego nie da sie przejsc na ten sprawdzany wierzcholek */
             printf ("najkrotsza droga do %d = %g\n", i, d[i].shortest_path);
 
     printf ("\n");
