@@ -5,9 +5,9 @@
 
 #include "store.h"
 
-static int add_pair(graph_t graph, int vertex_index, int vertex, double weight) {
-    if (store_add_edge(graph, vertex_index, weight, vertex) != 0 ||
-        store_add_edge(graph, vertex, weight, vertex_index) != 0) 
+static int add_pair(edge_t edge, int vertex_index, int vertex, double weight) {
+    if (store_add_edge(edge, vertex_index, weight, vertex) != 0 ||
+        store_add_edge(edge, vertex, weight, vertex_index) != 0) 
         return 1; 
 
     return 0;
@@ -20,17 +20,17 @@ static int make_connection(double probability) {
     return border >= value ? 1 : 0;
 }
 
-graph_desc_t generate_grid(int rows, int columns, double x, double y, double probability) {
-    graph_desc_t g = store_init(rows, columns);
+graph_t generate_grid(int rows, int columns, double x, double y, double probability) {
+    graph_t g = store_init(rows, columns);
     double weight;
-    graph_t graph;
+    edge_t edge;
 
-    if (g == NULL || g->graph == NULL ) {
+    if (g == NULL || g->edge == NULL ) {
         lastError = MEMORY_ERR;
         return NULL;
     }
 
-    graph = g->graph;
+    edge = g->edge;
 
     srand(time(NULL));
 
@@ -39,12 +39,12 @@ graph_desc_t generate_grid(int rows, int columns, double x, double y, double pro
 
             if (j < columns - 1 && make_connection(probability)) {
                 weight = (rand() / (double)RAND_MAX) * (y - x) + x;
-                add_pair(graph, i * columns + j, i * columns + j + 1, weight); 
+                add_pair(edge, i * columns + j, i * columns + j + 1, weight); 
             }
 
             if (i < rows - 1 && make_connection(probability)) { 
                 weight = (rand() / (double)RAND_MAX) * (y - x) + x;
-                add_pair(graph, i * columns + j, (i + 1) * columns + j, weight);
+                add_pair(edge, i * columns + j, (i + 1) * columns + j, weight);
             }
         }
     }

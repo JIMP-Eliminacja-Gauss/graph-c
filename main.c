@@ -54,7 +54,7 @@ int main (int argc, char **argv) {
     int dijkstra_start = -1;
     int opt;
 
-    graph_desc_t g = NULL;
+    graph_t g = NULL;
     dijkstra_t d = NULL;
 
     while ((opt = getopt(argc, argv, "r:c:x:y:w:o:b:p:d:")) != -1) {

@@ -36,7 +36,7 @@ int main (int argc, char **argv) {
     }
 
     dijkstra_t d = NULL;
-    graph_desc_t g = file_read (argv[1], &rows, &columns);
+    graph_t g = file_read (argv[1], &rows, &columns);
 
     if (g == NULL) {
         fprintf (stderr, "błąd podczas odczytu pliku\n");

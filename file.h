@@ -3,8 +3,8 @@
 
 #include "store.h"
 
-graph_desc_t file_read(char *file_name, int *rows, int *columns);
+graph_t file_read(char *file_name, int *rows, int *columns);
 
-int file_create(char *file_name, graph_desc_t g);
+int file_create(char *file_name, graph_t g);
 
 #endif
