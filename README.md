@@ -179,7 +179,8 @@ Bfs dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi i wie
 ![BfsD](testy/img/valgrind_time_bfsD.png)
 Dijkstra dla grafu 1000x1000 i wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
 ![Dijkstra](testy/img/valgrind_time_dijkstraNOPRINT.png)
-Dijkstra dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi i wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
+Dijkstra dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi
+i  dla wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
 ![DijkstraD](testy/img/valgrind_time_dijkstraD.png)
 Czytanie pliku dane/mygraph
 ![readfile](testy/img/valgrind_time_readfileMYGRAPH.png)
