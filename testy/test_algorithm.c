@@ -199,7 +199,7 @@ int main (int argc, char **argv) {
     store_free (g1);
     store_free (g2);
     store_free (g3);
-    dijkstra_free (d1);
-    dijkstra_free (d2);
-    dijkstra_free (d3);
+    free (d1);
+    free (d2);
+    free (d3);
 }
