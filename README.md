@@ -149,7 +149,9 @@ Plik odpowiedzialny za przetrzymywanie informacji o grafie: store.c (store.h)
 W pliku store.c (funkcja store_init) alokowana będzie pamięć na strukturę opisującą graf, zawierającą liczbę wierszy i liczbę kolumn grafu oraz wskaźnik na początek miejsca zajmowanego przez n struktur opisujących krawędzie grafu przy czym każda z nich będzie zawierała wierzchołek, na który możemy przejść z wierzchołka o danym indeksie, wagę tego przejścia i wskaźnik na następną strukturę opisującą kolejną krawędź (jeżeli ma więcej krawędzi, w przeciwnym wypadku NULL).  W pliku store.c (funkcja dijkstra_init) również będzie alokowana pamięć na n struktur zawierających długość najkrótszej drogi od wierzchołka źródłowego do danego wierzchołka oraz indeks wierzchołka, z którego wcześniej poprowadzono krawędź do tego wierzchołka (który poprzedza przejście na ten wierzchołek najkrótszą drogą).
 Przykładowo: dla wybranego wierzchołka źródłowego - 0, struktura odnosząca się do wierzchołka o indeksie 1 przechowuje długość najkrótszej drogi z wierzchołka źródłowego (0) do wierzchołka o tym indeksie i indeks wierzchołka, z którego wcześniej poprowadzono krawędź do aktualnego wierzchołka. (dla np. wierzchołka o indeksie 3 z obrazka poniżej po wykonaniu algorytmu Dijkstry będzie to 1, bo najkrótsza droga od wierzchołka 0 do wierzchołka 3 to 5 i jest to droga 0-1-3)
 Źródło: https://medium.com/@tarcisioma/data-structures-7766d3f93c70
-![GitHub Logo](/images/github-logo.png)
+https://miro.medium.com/max/1400/1*DxXU3dYi6_fFtlzwGabxYQ.jpeg
+![GitHub Logo](https://miro.medium.com/max/1400/1*DxXU3dYi6_fFtlzwGabxYQ.jpeg)
+
 
 
 
