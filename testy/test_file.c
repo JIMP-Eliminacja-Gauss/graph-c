@@ -27,6 +27,11 @@ int main(int argc, char **argv) {
 
     int rows, columns;
     graph_t graph = file_read(argv[1], &rows, &columns);
+    
+    if (graph == NULL) {
+        fprintf (stderr, "nie moge czytac z podanego pliku\n");
+        return -1;
+    }
 
     print_struct(graph -> edge, rows, columns);
 
