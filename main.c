@@ -54,7 +54,7 @@ int main (int argc, char **argv) {
     int bfs_start = -1;
     int dijkstra_start = -1;
     int opt;
-    int p_given = 0;
+    int p_given = 0, toY_given = 0;
 
     graph_t g = NULL;
     dijkstra_t d = NULL;
@@ -81,6 +81,7 @@ int main (int argc, char **argv) {
             fromX = atof (optarg);
             break;
         case 'y':
+            toY_given = 1;
             toY = atof (optarg);
             break;
         case 'w':
@@ -126,7 +127,7 @@ int main (int argc, char **argv) {
             return READ_ERR;
         }
     } else if (rows != 0 && columns != 0) {     // plik, z którego czytamy nie jest dany i została podana liczba wierszy i kolumn więc generujemy graf
-        if (fromX != 1 && toY == 11)
+        if (fromX != 1 && toY_given == 0)
             toY = fromX + 10;
         if (fromX > toY) {
             fprintf (stderr, "podano nieprawidłowy przedział wag <x,y> - podane x jest większe od y\n");
