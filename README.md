@@ -171,3 +171,5 @@ Językiem programowania używanym w programie jest język C w standardzie C99 (I
 
 Generacja grafu 1000x1000
 ![Generate](testy/img/valgrind_time_generator.png)
+Generacja grafu 1000x1000 z prawdopodobieństwem 0.1 na utworzenie krawędzi
+![GenerateD](testy/img/valgrind_time_generatorD.png)
