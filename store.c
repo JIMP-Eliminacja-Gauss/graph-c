@@ -86,9 +86,6 @@ void store_free(graph_t g) {
     free(g);
 }
 
-void dijkstra_free (dijkstra_t d) {
-    free (d);
-}
 
 dijkstra_t dijkstra_init (int n_vertices) {
     dijkstra_t d;

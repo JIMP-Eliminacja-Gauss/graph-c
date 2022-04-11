@@ -180,9 +180,9 @@ int main (int argc, char **argv) {
     }
 
     store_free (g);
-    dijkstra_free (d);
-    free (readfile);
-    free (writefile);
+    free_filenames (writefile, readfile);
+    if (d != NULL)
+        free (d);
 
     return 0;
 }

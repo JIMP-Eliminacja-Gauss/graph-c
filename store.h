@@ -28,8 +28,6 @@ int store_add_edge(edge_t edge, int vertex_index, double weight, int vertex);
 
 void store_free(graph_t g); 
 
-void dijkstra_free (dijkstra_t d);
-
 dijkstra_t dijkstra_init (int n_vertices);
 
 #endif
