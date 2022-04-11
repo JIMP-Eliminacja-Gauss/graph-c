@@ -183,6 +183,6 @@ Dijkstra dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi
 i  dla wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
 ![DijkstraD](testy/img/valgrind_time_dijkstraD.png)
 Czytanie pliku dane/mygraph
-![readfile](testy/img/valgrind_time_readfileMYGRAPH.png)
+![readfile](testy/img/valgrind_time_readfileMYGRAPH.png)____________________________________
 Pisanie do pliku opisu grafu 100x100
 ![writefile](testy/img/valgrind_time_writefile100.png)
