@@ -130,9 +130,9 @@ Plik odpowiedzialny za przetrzymywanie informacji o grafie: store.c (store.h)
     - int file_create – funkcja przyjmuje jako argumenty nazwę pliku, wskaźnik na opis grafu. Tworzy plik (o nazwie podanej w argumentach), który zawiera opis grafu. Zwraca 0, jeżeli sukces, a w przeciwnym wypadku 1.
 
 2.	Funkcje w pliku store.c:
-    - (wskaźnik na strukturę) store_init – funkcja przyjmująca jako argument liczbę kolumn i liczbę wierszy grafu. Alokuje pamięć (rozwinięcie w punkcie 3. Używane struktury danych, rozdziału SPECYFIKACJA IMPLEMENTACYJNA), zwraca wskaźnik na strukturę opisującą graf w przypadku sukcesu bądź NULL w przeciwnym wypadku.
-    - int store_add_edge – funkcja przyjmuje jako argumenty wskaźnik na początek miejsca w pamięci zajmowanego przez n (gdzie n – liczba wierzchołków grafu) struktur zawierających krawędzie grafu (rozwinięcie w punkcie 3. Używane struktury danych, rozdziału SPECYFIKACJA IMPLEMENTACYJNA),  indeks wierzchołka, na który przechodzimy, wagę tego przejścia, indeks wierzchołka, z którego przechodzimy. Alokuje pamięć na strukturę (jeżeli potrzeba) i ją uzupełnia o podane w argumentach wartości. Zwraca 0, jeżeli sukces, w przeciwnym wypadku 1.
-    - (wskaźnik na strukturę) dijkstra_init – funkcja przyjmująca jako argument liczbę wierzchołków grafu. Alokuje pamięć (rozwinięcie w punkcie 3. Używane struktury danych, rozdziału SPECYFIKACJA IMPLEMENTACYJNA), zwraca wskaźnik na początek miejsca zajmowane w pamięci przez n (gdzie n – liczba wierzchołków grafu) zaalokowanych struktur w przypadku sukcesu bądź NULL w przeciwnym wypadku.
+    - (wskaźnik na strukturę) store_init – funkcja przyjmująca jako argument liczbę kolumn i liczbę wierszy grafu. Alokuje pamięć (rozwinięcie w [Używane struktury danych](#3-używane-struktury-danych)), zwraca wskaźnik na strukturę opisującą graf w przypadku sukcesu bądź NULL w przeciwnym wypadku.
+    - int store_add_edge – funkcja przyjmuje jako argumenty wskaźnik na początek miejsca w pamięci zajmowanego przez n (gdzie n – liczba wierzchołków grafu) struktur zawierających krawędzie grafu (rozwinięcie w [Używane struktury danych](#3-używane-struktury-danych)),  indeks wierzchołka, na który przechodzimy, wagę tego przejścia, indeks wierzchołka, z którego przechodzimy. Alokuje pamięć na strukturę (jeżeli potrzeba) i ją uzupełnia o podane w argumentach wartości. Zwraca 0, jeżeli sukces, w przeciwnym wypadku 1.
+    - (wskaźnik na strukturę) dijkstra_init – funkcja przyjmująca jako argument liczbę wierzchołków grafu. Alokuje pamięć (rozwinięcie w [Używane struktury danych](#3-używane-struktury-danych)), zwraca wskaźnik na początek miejsca zajmowane w pamięci przez n (gdzie n – liczba wierzchołków grafu) zaalokowanych struktur w przypadku sukcesu bądź NULL w przeciwnym wypadku.
     - void store_free – funkcja przyjmująca jako argumenty wskaźnik na strukturę zawierającą opis grafu. Zwalnia zaalokowaną pamięć.
 
 3.	Funkcje w pliku generator.c:
@@ -148,7 +148,10 @@ Plik odpowiedzialny za przetrzymywanie informacji o grafie: store.c (store.h)
 
 W pliku store.c (funkcja store_init) alokowana będzie pamięć na strukturę opisującą graf, zawierającą liczbę wierszy i liczbę kolumn grafu oraz wskaźnik na początek miejsca zajmowanego przez n struktur opisujących krawędzie grafu przy czym każda z nich będzie zawierała wierzchołek, na który możemy przejść z wierzchołka o danym indeksie, wagę tego przejścia i wskaźnik na następną strukturę opisującą kolejną krawędź (jeżeli ma więcej krawędzi, w przeciwnym wypadku NULL).  W pliku store.c (funkcja dijkstra_init) również będzie alokowana pamięć na n struktur zawierających długość najkrótszej drogi od wierzchołka źródłowego do danego wierzchołka oraz indeks wierzchołka, z którego wcześniej poprowadzono krawędź do tego wierzchołka (który poprzedza przejście na ten wierzchołek najkrótszą drogą).
 Przykładowo: dla wybranego wierzchołka źródłowego - 0, struktura odnosząca się do wierzchołka o indeksie 1 przechowuje długość najkrótszej drogi z wierzchołka źródłowego (0) do wierzchołka o tym indeksie i indeks wierzchołka, z którego wcześniej poprowadzono krawędź do aktualnego wierzchołka. (dla np. wierzchołka o indeksie 3 z obrazka poniżej po wykonaniu algorytmu Dijkstry będzie to 1, bo najkrótsza droga od wierzchołka 0 do wierzchołka 3 to 5 i jest to droga 0-1-3)
+
+![Adjacency list](https://miro.medium.com/max/1400/1*DxXU3dYi6_fFtlzwGabxYQ.jpeg)
 Źródło: https://medium.com/@tarcisioma/data-structures-7766d3f93c70
+
 
 
 
@@ -160,3 +163,25 @@ Przykładowo: dla wybranego wierzchołka źródłowego - 0, struktura odnosząca
 	
 Językiem programowania używanym w programie jest język C w standardzie C99 (ISO/IEC 9899:1999).
 
+
+
+
+
+## TESTY
+
+### Generacja grafu 1000x1000
+![Generate](testy/img/valgrind_time_generator.png)
+### Generacja grafu 1000x1000 z prawdopodobieństwem 0.1 na utworzenie krawędzi
+![GenerateD](testy/img/valgrind_time_generatorD.png)
+### Bfs dla grafu 1000x1000 i wierzchołka źrodłowego 2
+![Bfs](testy/img/valgrind_time_bfs.png)
+### Bfs dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi i wierzchołka źrodłowego 2
+![BfsD](testy/img/valgrind_time_bfsD.png)
+### Dijkstra dla grafu 1000x1000 i wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
+![Dijkstra](testy/img/valgrind_time_dijkstraNOPRINT.png)
+### Dijkstra dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi i  dla wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
+![DijkstraD](testy/img/valgrind_time_dijkstraD.png)
+### Czytanie pliku dane/mygraph
+![readfile](testy/img/valgrind_time_readfileMYGRAPH.png)            
+### Pisanie do pliku opisu grafu 100x100
+![writefile](testy/img/valgrind_time_writefile100.png)

@@ -6,6 +6,7 @@
 
 int main(int argc, char **argv) {
     if (argc < 3) {
+        printf("%s ilosc_wierszy ilosc_kolumn\n", argv[0]);
         return -2;
     }
 
