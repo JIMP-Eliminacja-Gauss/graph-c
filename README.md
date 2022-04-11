@@ -169,20 +169,19 @@ Językiem programowania używanym w programie jest język C w standardzie C99 (I
 
 ## TESTY
 
-Generacja grafu 1000x1000
+### Generacja grafu 1000x1000
 ![Generate](testy/img/valgrind_time_generator.png)
-Generacja grafu 1000x1000 z prawdopodobieństwem 0.1 na utworzenie krawędzi
+### Generacja grafu 1000x1000 z prawdopodobieństwem 0.1 na utworzenie krawędzi
 ![GenerateD](testy/img/valgrind_time_generatorD.png)
-Bfs dla grafu 1000x1000 i wierzchołka źrodłowego 2
+### Bfs dla grafu 1000x1000 i wierzchołka źrodłowego 2
 ![Bfs](testy/img/valgrind_time_bfs.png)
-Bfs dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi i wierzchołka źrodłowego 2
+### Bfs dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi i wierzchołka źrodłowego 2
 ![BfsD](testy/img/valgrind_time_bfsD.png)
-Dijkstra dla grafu 1000x1000 i wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
+### Dijkstra dla grafu 1000x1000 i wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
 ![Dijkstra](testy/img/valgrind_time_dijkstraNOPRINT.png)
-Dijkstra dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi
-i  dla wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
+### Dijkstra dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi i  dla wierzchołka źrółowego 5 i bez wypisywania na standardowe wyjście najkrótszych dróg
 ![DijkstraD](testy/img/valgrind_time_dijkstraD.png)
-Czytanie pliku dane/mygraph
+### Czytanie pliku dane/mygraph
 ![readfile](testy/img/valgrind_time_readfileMYGRAPH.png)            
-Pisanie do pliku opisu grafu 100x100
+### Pisanie do pliku opisu grafu 100x100
 ![writefile](testy/img/valgrind_time_writefile100.png)
