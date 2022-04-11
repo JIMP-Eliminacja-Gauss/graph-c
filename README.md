@@ -173,3 +173,7 @@ Generacja grafu 1000x1000
 ![Generate](testy/img/valgrind_time_generator.png)
 Generacja grafu 1000x1000 z prawdopodobieństwem 0.1 na utworzenie krawędzi
 ![GenerateD](testy/img/valgrind_time_generatorD.png)
+Bfs dla grafu 1000x1000 i wierzchołka źrodłowego 2
+![Bfs](testy/img/valgrind_time_bfs.png)
+Bfs dla grafu 1000x1000 z prawdopodobieństwem 0.2 na utworzenie krawędzi i wierzchołka źrodłowego 2
+![BfsD](testy/img/valgrind_time_bfsD.png)
