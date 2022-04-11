@@ -163,3 +163,11 @@ Przykładowo: dla wybranego wierzchołka źródłowego - 0, struktura odnosząca
 	
 Językiem programowania używanym w programie jest język C w standardzie C99 (ISO/IEC 9899:1999).
 
+
+
+
+
+## TESTY
+
+Generacja grafu 1000x1000
+![Generate](testy/img/valgrind_time_generator.png)
